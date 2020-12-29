@@ -15,6 +15,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -264,5 +265,9 @@ public class PassangerActivity extends FragmentActivity implements OnMapReadyCal
                 }
             }
         });
+    }
+
+    public void logout(MenuItem item) {
+
     }
 }

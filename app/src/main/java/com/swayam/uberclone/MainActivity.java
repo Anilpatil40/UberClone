@@ -175,7 +175,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void transitionToDriverActivity(){
-
+        startActivity(new Intent(this,DriverActivity.class));
+        finish();
     }
 
     private void showError(String message){
