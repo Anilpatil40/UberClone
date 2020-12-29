@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -32,6 +33,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.LocationCallback;
+import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -244,5 +246,23 @@ public class PassangerActivity extends FragmentActivity implements OnMapReadyCal
         dialog.setTitle("SUCCESSFUL");
         dialog.setContentText(message);
         dialog.show();
+    }
+
+    public void logout(View view) {
+        dialog.setMessage("Logging out...");
+        dialog.show();
+
+        ParseUser.logOutInBackground(new LogOutCallback() {
+            @Override
+            public void done(ParseException e) {
+                dialog.dismiss();
+                if (e == null){
+                    startActivity(new Intent(PassangerActivity.this,MainActivity.class));
+                    finish();
+                }else {
+                    showError("Something went wrong");
+                }
+            }
+        });
     }
 }
