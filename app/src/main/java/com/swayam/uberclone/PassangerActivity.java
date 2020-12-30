@@ -62,7 +62,6 @@ public class PassangerActivity extends FragmentActivity implements OnMapReadyCal
     private FitButton fitButton;
     private ProgressDialog dialog;
     private boolean isRequested = false;
-    private boolean driverAccepted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
