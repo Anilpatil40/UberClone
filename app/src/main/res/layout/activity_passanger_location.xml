@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PassangerLocationActivity"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_primary"
+        map:title="username"
+        map:titleTextColor="@color/white"/>
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <com.github.nikartm.button.FitButton
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        map:fb_text="Ride The Passanger"
+        map:fb_textColor="@color/white"
+        map:fb_rippleColor="@color/white"
+        map:fb_backgroundColor="@color/color_primary"
+        android:onClick="ridePassanger"/>
+
+    <com.github.nikartm.button.FitButton
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        map:fb_text="Send current location to passanger"
+        map:fb_textColor="@color/white"
+        map:fb_rippleColor="@color/white"
+        map:fb_backgroundColor="@color/color_primary"
+        android:onClick="sendCurrentLocation"/>
+
+</LinearLayout>

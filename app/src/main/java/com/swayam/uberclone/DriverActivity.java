@@ -4,14 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.LogOutCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.List;
 
@@ -28,9 +32,26 @@ public class DriverActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver);
 
-        location = new SimpleLocation(this,false,false,50);
+        location = new SimpleLocation(this,false,false,0);
+
+        location.setListener(new SimpleLocation.Listener() {
+            @Override
+            public void onPositionChanged() {
+                adapter.setDriverLocation(location.getPosition());
+            }
+        });
 
         adapter = new DriverRecyclerViewAdapter();
+        adapter.setOnItemSelectListener(new DriverRecyclerViewAdapter.OnItemSelectListener() {
+            @Override
+            public void selectedItem(String username, double lat, double lon) {
+                Intent intent = new Intent(DriverActivity.this,PassangerLocationActivity.class);
+                intent.putExtra("username",username);
+                intent.putExtra("lat",lat);
+                intent.putExtra("lon",lon);
+                startActivity(intent);
+            }
+        });
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setAdapter(adapter);
         refreshLayout = findViewById(R.id.refreshLayout);
@@ -50,7 +71,9 @@ public class DriverActivity extends AppCompatActivity {
         refreshLayout.setRefreshing(true);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("PassangerRequests");
-        query.whereNotContainedIn("username",adapter.getUsers());
+        query.whereNear("point",new ParseGeoPoint(location.getLatitude(),location.getLongitude()));
+        query.whereDoesNotExist("driver");
+        adapter.clear();
 
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -58,7 +81,7 @@ public class DriverActivity extends AppCompatActivity {
                 refreshLayout.setRefreshing(false);
                 if (e == null){
                     for (ParseObject parseObject : objects){
-                        adapter.addUser(parseObject.getString("username"));
+                        adapter.addUser(parseObject);
                     }
                 }else {
                     Toast.makeText(DriverActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -69,7 +92,17 @@ public class DriverActivity extends AppCompatActivity {
     }
 
     public void logout(MenuItem item) {
+        ParseUser.logOutInBackground(new LogOutCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null){
+                    startActivity(new Intent(DriverActivity.this,MainActivity.class));
+                    finish();
+                }else {
 
+                }
+            }
+        });
     }
 
     @Override

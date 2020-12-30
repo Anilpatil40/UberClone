@@ -41,5 +41,16 @@
         android:layout_height="match_parent"
         android:layout_above="@id/fitButton"/>
 
+    <com.github.nikartm.button.FitButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="30dp"
+        map:fb_cornerRadius="25dp"
+        map:fb_rippleColor="@color/white"
+        map:fb_backgroundColor="@color/color_primary"
+        android:onClick="refresh"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/fitButton"/>
+
 </RelativeLayout>
 

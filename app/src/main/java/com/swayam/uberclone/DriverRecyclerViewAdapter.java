@@ -8,18 +8,26 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
+
 import java.util.ArrayList;
 
-public class DriverRecyclerViewAdapter extends RecyclerView.Adapter<DriverRecyclerViewAdapter.Holder> {
-    ArrayList<String> list = new ArrayList<>();
+import im.delight.android.location.SimpleLocation;
 
-    public void addUser(String user){
+public class DriverRecyclerViewAdapter extends RecyclerView.Adapter<DriverRecyclerViewAdapter.Holder> {
+    private ArrayList<ParseObject> list = new ArrayList<>();
+    private SimpleLocation.Point location;
+    private OnItemSelectListener listener;
+
+    public void addUser(ParseObject user){
         list.add(user);
         notifyDataSetChanged();
     }
 
-    public ArrayList<String> getUsers(){
-        return list;
+    public void clear(){
+        list = new ArrayList<>();
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -31,7 +39,26 @@ public class DriverRecyclerViewAdapter extends RecyclerView.Adapter<DriverRecycl
 
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
-        holder.username.setText(list.get(position));
+        ParseObject parseObject = list.get(position);
+        String username = parseObject.getString("username");
+        ParseGeoPoint point = parseObject.getParseGeoPoint("point");
+        double lat = point.getLatitude();
+        double lon = point.getLongitude();
+        //to get near by distance from driver
+        if (location != null){
+            double distance = SimpleLocation.calculateDistance(location.latitude,location.longitude,lat,lon);
+            distance = Math.round(distance);
+            distance = distance / 1000;
+            holder.distance.setText(""+distance+" KM");
+        }
+        holder.username.setText(username);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null)
+                    listener.selectedItem(username,lat,lon);
+            }
+        });
     }
 
     @Override
@@ -39,12 +66,26 @@ public class DriverRecyclerViewAdapter extends RecyclerView.Adapter<DriverRecycl
         return list.size();
     }
 
+    public void setDriverLocation(SimpleLocation.Point location) {
+        this.location = location;
+    }
+
     class Holder extends RecyclerView.ViewHolder{
         private TextView username;
+        private TextView distance;
 
         public Holder(@NonNull View itemView) {
             super(itemView);
             username = itemView.findViewById(R.id.username);
+            distance = itemView.findViewById(R.id.distance);
         }
+    }
+
+    public void setOnItemSelectListener(OnItemSelectListener listener){
+        this.listener = listener;
+    }
+
+    interface OnItemSelectListener {
+        void selectedItem(String username,double lat,double lon);
     }
 }
